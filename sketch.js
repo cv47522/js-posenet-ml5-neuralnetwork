@@ -1,14 +1,28 @@
 // ml5.js: Pose Classification
-// The Coding Train / Daniel Shiffman
-// https://thecodingtrain.com/learning/ml5/7.2-pose-classification.html
-// https://youtu.be/FYgYyq-xqAw
-
-// All code: https://editor.p5js.org/codingtrain/sketches/JoZl-QRPK
-
-// Separated into three sketches
-// 1: Data Collection: https://editor.p5js.org/codingtrain/sketches/kTM0Gm-1q
-// 2: Model Training: https://editor.p5js.org/codingtrain/sketches/-Ywq20rM9
-// 3: Model Deployment: https://editor.p5js.org/codingtrain/sketches/c5sDNr8eM
+// Step 1: Data Collection: https://editor.p5js.org/codingtrain/sketches/kTM0Gm-1q
+// Step 2: Model Training: https://editor.p5js.org/codingtrain/sketches/-Ywq20rM9
+// Step 3: Model Deployment: https://editor.p5js.org/codingtrain/sketches/c5sDNr8eM
+/* ===
+Available parts in keypoints array are:
+Index Part
+0   nose
+1	leftEye
+2	rightEye
+3	leftEar
+4	rightEar
+5	leftShoulder
+6	rightShoulder
+7	leftElbow
+8	rightElbow
+9	leftWrist
+10	rightWrist
+11	leftHip
+12	rightHip
+13	leftKnee
+14	rightKnee
+15	leftAnkle
+16	rightAnkle
+=== */
 
 let video;
 let poseNet;
@@ -44,7 +58,7 @@ const modelInfo_YMCA = {
 let saveDataBtn;
 let loadFileBtn;
 let trainModelBtn;
-let loadModelBtn_YMCA;
+let loadModelInput, loadModelBtn_YMCA, loadModelBtn_ABCD;
 // let info;
 let message;
 //----------------------------------------------
@@ -84,42 +98,64 @@ function setup() {
 
   loadModelBtn_YMCA = select('#loadModelBtn_YMCA');
   loadModelBtn_YMCA.mousePressed(() => {
-    brain.load(modelInfo_YMCA, brainLoaded);
     // brain.load('model/ymca_model.json', brainLoaded);
+    brain.load(modelInfo_YMCA,  () => {
+      brainLoaded();
+      message.html('<br> YMCA Model Loaded!', true);
+    });
   });
 
   loadModelBtn_ABCD = select('#loadModelBtn_ABCD');
   loadModelBtn_ABCD.mousePressed(() => {
     // brain.load('model/01234_model.json', brainLoaded);
-    brain.load(modelInfo_ABCD, brainLoaded);
+    brain.load(modelInfo_ABCD,  () => {
+      brainLoaded();
+      message.html('<br> 01234 Model Loaded!', true);
+    });
   });
 
-  // loadModelInput = select('#loadModelInput');
-  // loadModelInput.changed(() => {
-  //   brain.load(loadModelInput.elt.files, () => {
-  //     brainLoaded();
-  //     message.html('Data Loaded!');
-  //   });
-  //   console.log(loadModelInput.elt.files);
-  // });
+  loadModelInput = select('#loadModelInput');
+  loadModelInput.changed(() => {
+    brain.load(loadModelInput.elt.files, () => {
+      brainLoaded();
+      message.html('<br> External Model Loaded!', true);
+    });
+    console.log(loadModelInput.elt.files);
+  });
 
   message = select('#message');
 //----------------------------------------------
 
 }
 
+
+
+
 function draw() {
   push();
   translate(video.width, 0);
   scale(-1, 1);
   image(video, 0, 0, video.width, video.height);
+  // filter(INVERT);
+  noStroke();
+  fill(255);
+  video.loadPixels();
+  const stepSize = 10;
+  for (let y = 0; y < height; y += stepSize) {
+    for (let x = 0; x < width; x += stepSize) {
+      const i = y * width + x;
+      const darkness = (255 - video.pixels[i * 4]) / 255;
+      const radius = stepSize * darkness;
+      ellipse(x, y, radius, radius);
+    }
+  }
 
   if (pose) {
     for (let i = 0; i < skeleton.length; i++) {
       let a = skeleton[i][0];
       let b = skeleton[i][1];
       strokeWeight(4);
-      stroke(255);
+      stroke(255, 0, 0);
 
       line(a.position.x, a.position.y, b.position.x, b.position.y);
     }
@@ -152,8 +188,8 @@ function externalModelLoaded() {
 }
 
 function brainLoaded() {
-  console.log('External Model Loaded, Pose Classification Ready!');
-  message.html('External Model Loaded, Pose Classification Ready!');
+  console.log('Pose Classification Ready!');
+  message.html('Pose Classification Ready!');
   classifyPose();
 }
 

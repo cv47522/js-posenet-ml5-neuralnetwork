@@ -17,47 +17,61 @@
   <title>PoseNet</title>
 </head>
 <body class="container">
-  <div class="row mt-5">
-    <h1>PoseNet + Neural Network</h1>
-  </div>
-  <div class="row my-3">
+
+  <div class="row mt-3">
     <div class="col">
+      <h1>PoseNet + Neural Network</h1>
+    </div>
+  </div>
+  <hr>
+  <div class="row my-3">
+    <div class="col-6">
       <h5 class="text-primary">Step 1 - Collect pose data: Enter any key to start collecting its data.</h2>
     </div>
-    <div class="col">
+    <div class="col-6">
       <button onclick='saveJsonData()' id="saveDataBtn" type="button" class="btn btn-warning">Save Data</button>
     </div>
   </div>
+  <hr>
   <div class="row my-3">
-    <div class="col">
+    <div class="col-6">
       <h5 class="text-primary">Step 2 - Load data</h2>
     </div>
-    <div class="col">
+    <div class="col-6">
       <input type="file" id="loadFileBtn" multiple />
     </div>
   </div>
+  <hr>
   <div class="row my-3">
-    <div class="col">
+    <div class="col-6">
       <h5 class="text-primary">Step 3 - Train the model and start classifying</h2>
     </div>
-    <div class="col">
+    <div class="col-6">
       <button id="trainModelBtn" type="button" class="btn btn-danger">Train Model</button>
     </div>
   </div>
+  <hr>
   <div class="row my-3">
-    <div class="col">
+    <div class="col-6">
       <!-- <h5 class="text-primary">Step 4 - Load an external model</h2> -->
       <h5 class="text-primary">Step 4 - Load a predefined model</h2>
     </div>
-    <div class="col">
-      <!-- <input type="file" id="loadModelInput" multiple /> -->
-      <button id="loadModelBtn_YMCA" type="button" class="btn btn-success">Load YMCA Model</button>
-      <button id="loadModelBtn_ABCD" type="button" class="btn btn-info">Load ABCD Model</button>
-
+    <div class="col-6 px-0">
+      <div class="col">
+        <button id="loadModelBtn_YMCA" type="button" class="btn btn-success">Load YMCA Model</button>
+        <button id="loadModelBtn_ABCD" type="button" class="btn btn-info">Load 01234 Model</button>
+      </div>
+      <div class="col mt-3">
+        <input type="file" id="loadModelInput" multiple />
+      </div>
     </div>
   </div>
-  <div id='message' class="row my-3 px-4 py-4 h5 bg-dark" style='color: #7FFF03'>
+  <hr>
+  <div class="row my-3">
+    <div id='message' class="col px-4 py-4 h5 bg-dark" style='color: #7FFF03'>
+    </div>
   </div>
+  <hr>
 
   <script src="sketch.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
