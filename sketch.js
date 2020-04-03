@@ -36,6 +36,8 @@ let state = 'waiting';
 let targetLabel;
 let maxDistance;
 
+let system;
+
 const dataFile = 'abcd.json';
 const options = {
   // dataUrl: dataFile,
@@ -124,7 +126,7 @@ function setup() {
     // brain.load('model/ymca_model.json', brainLoaded);
     brain.load(modelInfo_YMCA,  () => {
       brainLoaded();
-      message.html('<br> YMCA Model Loaded!', true);
+      message.html('<br> YLIE Model Loaded!', true);
     });
   });
 
@@ -194,7 +196,6 @@ function draw() {
   pop();
 
 
-
   switch (poseLabel) {
     case 'Y':
       let shoulderR = pose.rightShoulder;
@@ -203,6 +204,7 @@ function draw() {
 
       let wristR = pose.rightWrist;
       let wristL = pose.leftWrist;
+
       let x = map((wristR.x + wristL.x) / 2, 0, width, width, 0);
       let y = (wristR.y + wristL.y) / 2;
       maxDistance = sqrt(pow(width, 2) + pow(height, 2));
@@ -213,21 +215,28 @@ function draw() {
       // Changing the rate alters the pitch
       let speed = map(distance, 0.1, maxDistance, 0.1, 4);
       // speed = constrain(speed, 0.01, 4);
-      virus_sound.rate(speed * 4);
+      virus_sound.rate(speed * 3);
       virus_sound.play();
       // console.log('Vrius X: ' + x + ', ' + 'Wrist R X: ' + wristR.x);
       break;
-    case 'C':
+    case 'B':
       label = 'STOP!';
       createText(label);
+      // let wristL = pose.leftWrist;
+      // system = new ParticleSystem(createVector(wristL.x, wristL.y));
+      // system.addParticle();
+      // system.run();
       console.log(label);
+      break;
     case 'M':
       label = '?';
       createText(label);
       // console.log(label);
+      break;
     default:
       virus_sound.stop();
-      // createText(label);
+      // system.stop();
+      createText(poseLabel);
   }
 }
 
@@ -252,11 +261,11 @@ function createVirus(x, y, distance) {
   // scale(-1, 1);
   stroke(0);
   strokeWeight(2);
-  if (distance >= 650){
+  if (distance >= 710){
     fill(0, 255, 0)
-  }else if (distance >= 600 && distance < 650){
+  }else if (distance >= 650 && distance < 710){
     fill(255, 255, 0)
-  }else if (distance >= 550 && distance < 600){
+  }else if (distance >= 600 && distance < 650){
     fill(255, 125, 0)
   }else{
     fill(255, 0, 0)
@@ -269,15 +278,67 @@ function createVirus(x, y, distance) {
   pop();
 }
 
-function createText() {
+function createText(labelShow) {
   fill(255, 0, 255);
   noStroke();
   textSize(200);
   textAlign(CENTER, CENTER);
-  text(label, width / 2, height / 2);
+  text(labelShow, width / 2, height / 2);
   // text(label, width / 2, height / 2);
 }
-//------------------------
+//------------------------ Particle Functions ------------------
+// A simple Particle class
+// let Particle = function(position) {
+//   this.acceleration = createVector(0, 0.05);
+//   this.velocity = createVector(random(-1, 1), random(-1, 0));
+//   this.position = position.copy();
+//   this.lifespan = 255;
+// };
+//
+// Particle.prototype.run = function() {
+//   this.update();
+//   this.display();
+// };
+//
+// // Method to update position
+// Particle.prototype.update = function(){
+//   this.velocity.add(this.acceleration);
+//   this.position.add(this.velocity);
+//   this.lifespan -= 2;
+// };
+//
+// // Method to display
+// Particle.prototype.display = function() {
+//   stroke(200, this.lifespan);
+//   strokeWeight(2);
+//   fill(127, this.lifespan, 255);
+//   ellipse(this.position.x, this.position.y, 12, 12);
+// };
+//
+// // Is the particle still useful?
+// Particle.prototype.isDead = function(){
+//   return this.lifespan < 0;
+// };
+//
+// let ParticleSystem = function(position) {
+//   this.origin = position.copy();
+//   this.particles = [];
+// };
+//
+// ParticleSystem.prototype.addParticle = function() {
+//   this.particles.push(new Particle(this.origin));
+// };
+//
+// ParticleSystem.prototype.run = function() {
+//   for (let i = this.particles.length-1; i >= 0; i--) {
+//     let p = this.particles[i];
+//     p.run();
+//     if (p.isDead()) {
+//       this.particles.splice(i, 1);
+//     }
+//   }
+// };
+//--------------------------------------------------------------------
 function posenetModelLoaded() {
   console.log('poseNet ready');
   message.html('poseNet ready');
@@ -297,7 +358,7 @@ function brainLoaded() {
 function trainModel() {
   brain.normalizeData();
   brain.train({
-    epochs: 50
+    epochs: 80
   }, whileTraining, finishedTraining);
   console.log('Data Ready! Training Model...');
   message.html('Data Ready! Training Model...');
